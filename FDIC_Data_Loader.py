@@ -1,3 +1,5 @@
+"""
+Created on Mon Oct 30 20:46:46 2017
 #Bank data via data extracted here: 
 #    https://www5.fdic.gov/sdi/main.asp?formname=compare
 #bank health reports        
@@ -37,6 +39,8 @@ class FDIC_Data_Loader(object):
                     
                     for priority in data_indexes.keys():
                         self.total_report[row[0]].update({priority : row[data_indexes[priority]]})
+            
+            
         
             
     def _header_indexes_(self, header_list, sheet_list):
@@ -57,7 +61,7 @@ class FDIC_Data_Loader(object):
         
         return proper_header
     
-    def generate_average(self):
+    def generate_total_average(self):
         '''Generate total average of all data'''
         self.total_average = {"cert" : 999999, "name" : "institutions", "namehcr" : "Total Averages"}
         
@@ -82,7 +86,63 @@ class FDIC_Data_Loader(object):
             self.total_average[item] = self.total_average[item]/total_banks
         
         self.total_report.update({"Total Averages" : self.total_average})
+      
+    def calculate_average(self, cert_list, cert, custom_cert):
+        self.custom_average = {"cert" : custom_cert, "name" : "institutions", "namehcr" : "Custom Average for cert" + str(cert)}
+        
+        for item in self.write_list[3:]:
+            self.custom_average.update({item : 0})
+        
+        total_banks = 0
+        if(len(cert_list)>100):
+            include = 100
+        else:
+            include = len(cert_list)
+            
+        for bank in cert_list[0:include]:         
+            index = 2
+            if(self.total_report[bank]["asset"] == 0):
+                continue
+            total_banks+=1           
+            for items in self.write_list[3:]:
+                index+=1
+                if(self.total_report[bank][items] == ""):
+                    continue
+                self.custom_average[self.write_list[index]]+=float(self.total_report[bank][items])
+        
+        self.custom_average["name"] = str(total_banks) + " institutions"
+        
+        for item in self.write_list[3:]:
+            self.custom_average[item] = self.custom_average[item]/total_banks
+        
+        self.total_report.update({custom_cert : self.custom_average})
+         
+    def generate_custom_average(self, cert, custom_cert):
+        similar_cert_list = []
+        similar_asset_list = []
+        
+        top_loan = self.determine_top_loan_type(cert)
+        for banks in self.total_report.keys():
+            if(banks == cert):
+                continue
+            if(top_loan == self.determine_top_loan_type(banks)):
+                similar_cert_list.append(banks)
+                similar_asset_list.append(self.total_report[cert]["asset"])
+        sorted_by_asset_certs = [similar_cert_list for _,similar_cert_list in sorted(zip(similar_asset_list,similar_cert_list))]
+        self.calculate_average(sorted_by_asset_certs, cert, custom_cert)
+        
                 
+        
+        
+    def determine_top_loan_type(self, cert):
+        top_loan = 0
+        top_loan_name = ""
+        for loan_type in self.data_sheet_list["_Net Loans and Leases"].keys():
+                        
+            if(self.total_report[cert][loan_type] != "" and float(self.total_report[cert][loan_type])>top_loan):
+                top_loan = float(self.total_report[cert][loan_type])
+                top_loan_name = loan_type
+        return(top_loan_name)
     
     def load_to_csv(self, desired_file_name):
         with \
@@ -139,7 +199,16 @@ def load_to_excel(excel_file_with_dir, compiled_data_location):
                         worksheet.write(r,c,col)
                     
                     
-        workbook.close()
+    workbook.close()
+        
+def determine_custom_averages():
+    avg_dir = os.path.dirname(os.path.realpath(__file__)) + "/average_certs.csv"
+    avg_dict = {}    
+    with open(avg_dir, 'r') as avg:
+        avg_reader = csv.reader(avg)
+        for row in avg_reader:
+            avg_dict.update({row[0] : row[1]})
+    return avg_dict
 
 def main(directory_total_data, data_sheet_items_dir, excel_file_with_dir, compiled_bank_data_location):
     ''' 1. Takes Directory where All_Reports for multiple quarters are.
@@ -148,6 +217,9 @@ def main(directory_total_data, data_sheet_items_dir, excel_file_with_dir, compil
         4. Takes Condensed/Compiled CSV file location
     Loops through directory folders and creates FDIC_Bank_Data_Loader objects
         for each date. '''
+    
+    custom_avg_dict = determine_custom_averages()
+            
     for file in os.listdir(directory_total_data):
         print("Loading data from date: " + file[12:])
 
@@ -156,9 +228,15 @@ def main(directory_total_data, data_sheet_items_dir, excel_file_with_dir, compil
         generate_data_sheet_list(data_sheet_items_dir), \
         compiled_bank_data_location)
         
-        current_date_loader.generate_average()
+        current_date_loader.generate_total_average()
+        
+        for cert in custom_avg_dict.keys():
+            current_date_loader.generate_custom_average(cert, custom_avg_dict[cert])
+        
         current_date_loader.load_to_csv(file[12:] + ".csv")
     
     load_to_excel(\
-        excel_file_with_dir, \
-        compiled_bank_data_location)
+    excel_file_with_dir, \
+    compiled_bank_data_location)
+
+            
