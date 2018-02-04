@@ -1,3 +1,5 @@
+Written with Python 3.5.2
+
 # FDIC-Bank-Data-Organizer
 Main takes 4 dir locations
         1. Takes Directory where All_Reports for multiple quarters are.
