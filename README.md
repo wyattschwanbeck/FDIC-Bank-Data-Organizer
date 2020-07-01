@@ -9,9 +9,9 @@ Main takes 4 dir locations
 
 Example Output of Python Script:
 >main("C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/All_Reports/",\
-<br>>       "C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/data_sheet_items/",\
-<br>>        "C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/Compiled_Data.xlsx",\
-<br>>        "C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/Compiled_Files/")
+<br>       "C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/data_sheet_items/",\
+<br>        "C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/Compiled_Data.xlsx",\
+<br>        "C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/Compiled_Files/")
 <br>>        Loading data from date: 20180630
 <br>>        Loading data for _Assets and Liabilities
 <br>>        Loading data for _Income and Expense
