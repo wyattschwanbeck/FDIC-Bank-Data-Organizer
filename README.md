@@ -2,10 +2,10 @@ Written with Python 3.5.2
 
 # FDIC-Bank-Data-Organizer
 Main takes 4 dir locations
-        1. Takes Directory where All_Reports for multiple quarters are.
-        2. Takes data_sheet_items_dir
-        3. Takes Excel file name with dir
-        4. Takes location where Condensed/Compiled CSV files will be stored. (Needs to be empty for first run)
+       <br> 1. Takes Directory where All_Reports for multiple quarters are.
+       <br> 2. Takes data_sheet_items_dir
+       <br> 3. Takes Excel file name with dir
+       <br> 4. Takes location where Condensed/Compiled CSV files will be stored. (Needs to be empty for first run)
 
 Example Output of Python Script:
 >main("C:/Users/wyatt/Desktop/FDIC-Bank-Data-Organizer-master/All_Reports/",\
