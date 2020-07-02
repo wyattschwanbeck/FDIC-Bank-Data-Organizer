@@ -1,6 +1,12 @@
 Written with Python 3.5.2
 
 # FDIC-Bank-Data-Organizer
+<i>Data Downloaded from</i>: https://www5.fdic.gov/sdi/download_large_list_outside.asp
+Make sure to unzip the files into their own folders before kicking off the main script.
+
+<b>Data Sheet Elements</b>
+Can be customized to return encoded items as actually readable labels. This data was composed from the readme's included with each download dump. Any number of label lists can be included as long as you follow the pattern.
+
 Main takes 4 dir locations
        <br> 1. Takes Directory where All_Reports for multiple quarters are.
        <br> 2. Takes data_sheet_items_dir
